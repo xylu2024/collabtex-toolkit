@@ -1,0 +1,22 @@
+# Credentials and auth files (NEVER commit cookies to git!)
+.olauth
+.olauth.json
+
+# Caches and temporary merge files
+.collabtex_cache/
+.collabtex_cache/**
+.olsync/
+*.olsync*
+
+# Local configurations
+.olproject
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini

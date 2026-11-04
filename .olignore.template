@@ -1,0 +1,61 @@
+# ==============================================================================
+# Overleaf / Collabtex Whitelist Sync Ignore Rules (.olignore)
+# Whitelist: Source .tex, .bib, tables/, figures/ (*.pdf and *.png only)
+# ==============================================================================
+
+# Directories to ignore entirely
+build/*
+build/**
+.history/*
+.history/**
+.vscode/*
+.vscode/**
+scripts/*
+scripts/**
+
+# Ignore heavy vector sources and design files (Keep only PDF & PNG)
+*.svg
+figures/*.svg
+figures/**/*.svg
+figures/*.bat
+figures/*.xlsx
+
+# Root compiled PDFs (Overleaf compiles its own main.pdf; do not upload local build PDF)
+main.pdf
+SupplementalMaterial.pdf
+
+# System files, configs, and caches
+*.md
+*.synctex.gz
+*.synctex
+*.synctex(busy)
+*.ps1
+*.bat
+.latexmkrc
+.olauth
+.olignore
+.olproject
+.collabtex_cache/*
+.collabtex_cache/**
+.stignore
+.olsync*
+*.olsync*
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# LaTeX compilation auxiliary files
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.toc
+*.lof
+*.lot
+*.bcf
+*.run.xml
+*Notes.bib
+*.xdv

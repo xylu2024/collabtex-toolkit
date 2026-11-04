@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "server": "https://collabtex.helmholtz.cloud",
+  "cookies": {
+    "sharelatex.sid": "YOUR_SHARELATEX_SESSION_COOKIE_HERE"
+  },
+  "csrf": ""
+}
