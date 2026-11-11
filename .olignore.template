@@ -1,6 +1,7 @@
 # ==============================================================================
-# Overleaf / Collabtex Whitelist Sync Ignore Rules (.olignore)
-# Whitelist: Source .tex, .bib, tables/, figures/ (*.pdf and *.png only)
+# Overleaf / Collabtex Strict Whitelist Ignore Rules (.olignore)
+# Whitelist: Source .tex, .bib, tables/*,
+#            figures/ (*.pdf and *.png only, *.svg and archives excluded)
 # ==============================================================================
 
 # Directories to ignore entirely
@@ -8,29 +9,57 @@ build/*
 build/**
 .history/*
 .history/**
+.agents/*
+.agents/**
 .vscode/*
 .vscode/**
+literature/*
+literature/**
 scripts/*
 scripts/**
+FIG.Assets/*
+FIG.Assets/**
+FIG.Data/*
+FIG.Data/**
+figures/old/*
+figures/old/**
 
-# Ignore heavy vector sources and design files (Keep only PDF & PNG)
+# Figures formatting: ignore SVG, scripts, spreadsheets, backups, and caches (Keep only PDF & PNG)
 *.svg
 figures/*.svg
 figures/**/*.svg
 figures/*.bat
+figures/*.py
 figures/*.xlsx
+*.bak
+figures/*.bak
+figures/**/*.bak
+figures/.bak/*
+figures/.bak/**
+figures/.fig_cache.json
 
-# Root compiled PDFs (Overleaf compiles its own main.pdf; do not upload local build PDF)
+# Legacy / historical figure versions (Keep only current production PDF & PNG)
+*_ver*
+*_ver*.*
+figures/*_ver*
+figures/*_ver*.*
+figures/**/*_ver*.*
+
+# Root compiled PDFs (Overleaf compiles its own PDF; do not upload local build PDF)
 main.pdf
 SupplementalMaterial.pdf
+PRFluidsSupplementalMaterial.pdf
 
-# System files, configs, and caches
+# Documentation, system files, dev configs, and sync state
 *.md
 *.synctex.gz
 *.synctex
 *.synctex(busy)
 *.ps1
 *.bat
+*.pl
+*.lgpl
+*.code-workspace
 .latexmkrc
 .olauth
 .olignore

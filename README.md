@@ -67,19 +67,22 @@ flowchart TD
 ## ✨ Key Features
 
 1. **🛡️ Smart 3-Way Merge (`collabtex-merge`)**:
-   - Compares **Local (You)**, **Remote (Supervisor)**, and **Base (Last Sync)** using the standalone `git merge-file` engine.
-   - Non-overlapping edits (e.g., supervisor commented on Section 1 while you drafted Section 3) are **automatically and cleanly fused in milliseconds**.
-   - If both modified the exact same sentence, conflict markers are placed and VS Code's native **Merge Editor** is automatically launched with 1-click resolution buttons.
-2. **🔍 Non-Destructive Visual Diff (`collabtex-diff`)**:
-   - Downloads a shadow copy to `.collabtex_cache/remote/` without touching your working files.
-   - Automatically opens a split-screen diff in VS Code (`code --diff`) to review collaborator changes in color before deciding to merge.
-3. **🚀 Strict Whitelisting (`.olignore`)**:
+   - Compares **Local (You)**, **Remote (Supervisor)**, and **Base (Last Sync)** using the standalone `git merge-file` engine for text sources and **3-way SHA-256 content hashes** (`base_manifest.json`) for figures/PDFs.
+   - Non-overlapping text edits are **automatically and cleanly fused in milliseconds**; remote-updated binary figures are safely backed up and pulled, while conflicting figures are preserved cleanly alongside a backup copy.
+2. **🔍 Content-Hash Diff for Text & Figures (`collabtex-diff`)**:
+   - Downloads the full remote snapshot to `.collabtex_cache/remote/` without touching your working files.
+   - Compares **both text files and binary assets (`figures/*.pdf`, `figures/*.png`) by exact SHA-256 digest and file size**, immediately catching updated figures even when the filename remains identical.
+   - Automatically opens a split-screen diff in VS Code (`code --diff`) for modified text sources.
+3. **🔒 Post-Sync Cryptographic Asset Verification (`verify-push` / `verify-pull`)**:
+   - Automatically runs after `collabtex-push` and `collabtex-pull` to verify 100% SHA-256 byte-for-byte parity between local whitelisted files and the live Overleaf archive.
+   - Detects any same-name images skipped due to prompt defaults, stale `.olsync-state.json`, or cross-PC Syncthing drift, and cleanly replaces stale remote binary blobs (`delete + re-upload` when needed).
+4. **🚀 Strict Whitelisting (`.olignore`)**:
    - Only syncs necessary LaTeX sources (`.tex`, `.bib`, `tables/`) and submission-ready images (`figures/*.pdf`, `figures/*.png`).
-   - Automatically filters out bulky `.svg` design files, local auxiliary garbage (`build/`, `.log`, `.aux`), and credentials.
-4. **⚡ Seamless SyncTeX Jump (`.latexmkrc`)**:
+   - Automatically filters out `.svg` sources, figure generator scripts (`figures/*.py`, `*.bat`, `*.xlsx`), `.bak` backups, legacy `figures/old/` / `*_ver*` versions, build directories (`build/`), and credentials.
+5. **⚡ Seamless SyncTeX Jump (`.latexmkrc`)**:
    - Fixes the infamous "broken SyncTeX reverse jump" caused by LaTeX Workshop moving build artifacts into `-auxdir=build`.
    - Copies `synctex.gz` back to the root upon every successful build, ensuring `Ctrl + Click` jump remains 100% responsive.
-5. **💻 One-Click Cross-Machine Bootstrap (`setup-this-computer.bat`)**:
+6. **💻 One-Click Cross-Machine Bootstrap (`setup-this-computer.bat`)**:
    - Automatically installs `overleaf-sync`, applies the Socket.IO & UTF-8 protocol patch for Overleaf CE, and registers global CLI commands. Fully immune to Windows language locales (German, Chinese, English).
 
 ---
@@ -135,10 +138,10 @@ Once initialized, the following commands are available globally in any terminal:
 
 | Command | Recommended Scenario | Behavior |
 | :--- | :--- | :--- |
-| `collabtex-diff` | **Inspection** (Unsure if supervisor made edits) | Downloads remote copy to temporary cache, opens side-by-side diff in VS Code. **Zero modification to local files.** |
-| `collabtex-merge` | **Divergence** (Both sides modified files) | Uses Git 3-Way Merge to auto-fuse changes. Opens VS Code Merge Editor only if direct line conflicts occur. |
-| `collabtex-push` | **Publishing** (Ready to share local updates) | Pushes local clean sources to Overleaf. Updates base synchronization snapshot. |
-| `collabtex-pull` | **Fetching** (Supervisor commented, local untouched) | Pulls remote comments directly down to local. |
+| `collabtex-diff` | **Inspection** (Unsure if supervisor or figures changed) | Downloads remote snapshot, compares all `.tex`, `.bib`, and `figures/*` via **SHA-256**, and opens VS Code diff for text changes. **Zero modification to local files.** |
+| `collabtex-merge` | **Divergence** (Both sides modified files) | Uses Git 3-Way Merge for text and 3-way SHA-256 check for figures/PDFs. Opens VS Code Merge Editor only if conflicts occur. |
+| `collabtex-push [-Force]` | **Publishing** (Ready to share local updates) | Pushes local clean sources to Overleaf and runs **SHA-256 verification** (`verify-push`) to ensure updated same-name images never remain stale on remote. |
+| `collabtex-pull [-Force]` | **Fetching** (Supervisor updated text/figures) | Pulls remote edits directly down to local, verifies SHA-256 parity across text and figures, and updates the base snapshot. |
 
 ---
 

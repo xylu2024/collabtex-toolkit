@@ -71,16 +71,16 @@ try {
 # Overleaf / Collabtex Toolkit
 function collabtex-push {
     if (Test-Path "scripts\push-collabtex.ps1") {
-        & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\push-collabtex.ps1"
+        & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\push-collabtex.ps1" @args
     } else {
-        ols -l
+        ols -l @args
     }
 }
 function collabtex-pull {
     if (Test-Path "scripts\pull-collabtex.ps1") {
-        & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\pull-collabtex.ps1"
+        & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\pull-collabtex.ps1" @args
     } else {
-        ols -r
+        ols -r @args
     }
 }
 function collabtex-diff {

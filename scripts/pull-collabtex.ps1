@@ -1,6 +1,10 @@
 # Safe Pull Script for Overleaf / HZDR Collabtex
 # Synchronizes remote changes down to local (Remote -> Local Only)
-# Used when supervisor/collaborator has made annotations or text edits on Overleaf
+# Respects .olignore and verifies SHA-256 content parity for figures & text sources.
+
+param(
+    [switch]$Force
+)
 
 $projectDir = Join-Path $PSScriptRoot ".."
 Set-Location $projectDir
@@ -31,7 +35,7 @@ if (Test-Path $authFile) {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "   Overleaf / Collabtex Pull Channel" -ForegroundColor Cyan
+Write-Host "   Overleaf / Collabtex Pull Channel (SHA-256 Verified)" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "[*] Target Project: $projectName" -ForegroundColor Gray
 Write-Host "[*] Target Server:  $serverUrl" -ForegroundColor Gray
@@ -41,9 +45,20 @@ Write-Host "[>>] Fetching latest annotations and edits from Overleaf..." -Foregr
 ols -r --server $serverUrl -n $projectName
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "`n[OK] Successfully pulled latest annotations!" -ForegroundColor Green
-    python "$PSScriptRoot\collabtex_tool.py" update-base
-    Write-Host "[*] Tip: Search for '\textcolor' or '%' in VS Code to review collaborator feedback." -ForegroundColor Yellow
+    Write-Host "`n[>>] Running SHA-256 post-pull check across text sources & figures..." -ForegroundColor Cyan
+    if ($Force) {
+        python "$PSScriptRoot\collabtex_tool.py" verify-pull --force
+    } else {
+        python "$PSScriptRoot\collabtex_tool.py" verify-pull
+    }
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "`n[OK] Successfully pulled & verified latest updates!" -ForegroundColor Green
+        Write-Host "[*] Tip: Search for '\textcolor' or '%' in VS Code to review collaborator feedback." -ForegroundColor Yellow
+    } else {
+        Write-Host "`n[!] Post-pull check encountered an issue." -ForegroundColor Red
+        exit 1
+    }
 } else {
     Write-Host "`n[!] Pull encountered an issue. Please verify network or authentication." -ForegroundColor Red
+    exit 1
 }
