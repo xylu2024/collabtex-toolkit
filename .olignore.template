@@ -25,6 +25,14 @@ figures/old/*
 figures/old/**
 figures/legacy/*
 figures/legacy/**
+figures/__pycache__/*
+figures/__pycache__/**
+__pycache__/*
+__pycache__/**
+**/__pycache__/*
+**/__pycache__/**
+*.pyc
+*.pyo
 
 # Figures formatting: ignore SVG, scripts, spreadsheets, backups, and caches (Keep only PDF & PNG)
 *.svg
