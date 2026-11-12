@@ -227,15 +227,37 @@ def update_base():
     print(f"[*] Base snapshot updated: {text_count} text source(s) + {asset_count} binary asset(s) (SHA-256 recorded).")
 
 
+def refresh_auth_csrf(quiet=False):
+    """Verify current cookie and automatically sync .olauth CSRF token when empty or stale."""
+    from olsync import auth
+    from olsync.olclient import OverleafClient
+
+    auth_path = get_auth_file()
+    login = auth.load_auth(auth_path)
+    server = get_server_url() or login["server"]
+    stored_csrf = login.get("csrf", "") or ""
+    probe = OverleafClient(login["cookies"], stored_csrf, base_url=server)
+    live_csrf = probe.fetch_csrf()
+    if live_csrf is None:
+        raise RuntimeError(
+            "The session cookie in .olauth has expired or is invalid. Please update sharelatex.sid from your browser."
+        )
+    if live_csrf != stored_csrf:
+        auth.save_auth(auth_path, login["cookies"], live_csrf, login["server"])
+        if not quiet:
+            print("[OK] Stale or empty CSRF token in .olauth has been automatically refreshed for the active cookie.")
+        return OverleafClient(login["cookies"], live_csrf, base_url=server)
+    if not quiet:
+        print("[*] CSRF token in .olauth matches the active session cookie.")
+    return probe
+
+
 def resolve_project(project_name=None):
     if project_name is None:
         project_name = get_project_name()
 
     server = get_server_url()
-    from olsync.olsync import load_client
-
-    auth_path = get_auth_file()
-    client = load_client(auth_path, server=server)
+    client = refresh_auth_csrf(quiet=True)
 
     target_project = None
     all_projs = client.all_projects()
@@ -749,7 +771,7 @@ def do_verify_pull(force=False):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: collabtex_tool.py [diff | merge | update-base | verify-push | verify-pull] [--force]")
+        print("Usage: collabtex_tool.py [diff | merge | update-base | verify-push | verify-pull | refresh-auth] [--force]")
         sys.exit(1)
 
     cmd = sys.argv[1].lower()
@@ -765,6 +787,8 @@ def main():
         do_verify_push(force=force)
     elif cmd in ("verify-pull", "verify_pull"):
         do_verify_pull(force=force)
+    elif cmd in ("refresh-auth", "refresh_auth"):
+        refresh_auth_csrf(quiet=False)
     else:
         print(f"Unknown command: {cmd}")
         sys.exit(1)

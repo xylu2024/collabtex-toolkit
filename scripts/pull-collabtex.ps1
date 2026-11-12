@@ -39,10 +39,17 @@ Write-Host "   Overleaf / Collabtex Pull Channel (SHA-256 Verified)" -Foreground
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "[*] Target Project: $projectName" -ForegroundColor Gray
 Write-Host "[*] Target Server:  $serverUrl" -ForegroundColor Gray
+Write-Host "[>>] Verifying cookie and syncing CSRF token..." -ForegroundColor Cyan
+python "$PSScriptRoot\collabtex_tool.py" refresh-auth
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "`n[!] Authentication check failed. Please verify sharelatex.sid in .olauth." -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "[>>] Fetching latest annotations and edits from Overleaf..." -ForegroundColor Cyan
 
 # Perform unidirectional remote pull (-r)
-ols -r --server $serverUrl -n $projectName
+ols -r -v --server $serverUrl -n $projectName
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n[>>] Running SHA-256 post-pull check across text sources & figures..." -ForegroundColor Cyan

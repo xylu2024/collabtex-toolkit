@@ -51,10 +51,17 @@ if (-not $Force) {
     }
 }
 
+Write-Host "`n[>>] Verifying cookie and syncing CSRF token..." -ForegroundColor Cyan
+python "$PSScriptRoot\collabtex_tool.py" refresh-auth
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "`n[!] Authentication check failed. Please verify sharelatex.sid in .olauth." -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "`n[>>] Pushing local updates to remote..." -ForegroundColor Cyan
 
 # Perform unidirectional local mirror (-l)
-ols -l --server $serverUrl -n $projectName
+ols -l -v --server $serverUrl -n $projectName
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n[>>] Running SHA-256 post-push verification across text sources & figures..." -ForegroundColor Cyan

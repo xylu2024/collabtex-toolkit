@@ -74,6 +74,9 @@ PRFluidsSupplementalMaterial.pdf
 .collabtex_cache/*
 .collabtex_cache/**
 .stignore
+~syncthing~*
+.~syncthing~*
+*.tmp
 .olsync*
 *.olsync*
 .DS_Store
