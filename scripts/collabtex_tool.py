@@ -245,7 +245,10 @@ def refresh_auth_csrf(quiet=False):
     if live_csrf != stored_csrf:
         auth.save_auth(auth_path, login["cookies"], live_csrf, login["server"])
         if not quiet:
-            print("[OK] Stale or empty CSRF token in .olauth has been automatically refreshed for the active cookie.")
+            if not stored_csrf:
+                print("[OK] Missing CSRF token in .olauth has been fetched and saved for the active cookie.")
+            else:
+                print("[OK] Active session cookie verified; CSRF token synced to .olauth.")
         return OverleafClient(login["cookies"], live_csrf, base_url=server)
     if not quiet:
         print("[*] CSRF token in .olauth matches the active session cookie.")
