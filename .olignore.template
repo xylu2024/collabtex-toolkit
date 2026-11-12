@@ -23,6 +23,8 @@ FIG.Data/*
 FIG.Data/**
 figures/old/*
 figures/old/**
+figures/legacy/*
+figures/legacy/**
 
 # Figures formatting: ignore SVG, scripts, spreadsheets, backups, and caches (Keep only PDF & PNG)
 *.svg
@@ -44,6 +46,11 @@ figures/.fig_cache.json
 figures/*_ver*
 figures/*_ver*.*
 figures/**/*_ver*.*
+*_legacy*
+*_legacy*.*
+figures/*_legacy*
+figures/*_legacy*.*
+figures/**/*_legacy*.*
 
 # Root compiled PDFs (Overleaf compiles its own PDF; do not upload local build PDF)
 main.pdf

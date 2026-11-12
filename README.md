@@ -78,7 +78,7 @@ flowchart TD
    - Detects any same-name images skipped due to prompt defaults, stale `.olsync-state.json`, or cross-PC Syncthing drift, and cleanly replaces stale remote binary blobs (`delete + re-upload` when needed).
 4. **🚀 Strict Whitelisting (`.olignore`)**:
    - Only syncs necessary LaTeX sources (`.tex`, `.bib`, `tables/`) and submission-ready images (`figures/*.pdf`, `figures/*.png`).
-   - Automatically filters out `.svg` sources, figure generator scripts (`figures/*.py`, `*.bat`, `*.xlsx`), `.bak` backups, legacy `figures/old/` / `*_ver*` versions, build directories (`build/`), and credentials.
+   - Automatically filters out `.svg` sources, figure generator scripts (`figures/*.py`, `*.bat`, `*.xlsx`), `.bak` backups, retired `figures/legacy/` / `*_legacy*` files, `figures/old/` / `*_ver*` drafts, build directories (`build/`), and credentials.
 5. **⚡ Seamless SyncTeX Jump (`.latexmkrc`)**:
    - Fixes the infamous "broken SyncTeX reverse jump" caused by LaTeX Workshop moving build artifacts into `-auxdir=build`.
    - Copies `synctex.gz` back to the root upon every successful build, ensuring `Ctrl + Click` jump remains 100% responsive.
